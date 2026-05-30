@@ -2,7 +2,7 @@
 
 **Current project logo:** src/app/icon.png
 
-<img src="./src/app/icon.png" alt="Glamour Studio" width="200" />
+<img src="./project-logo.png" alt="Glamour Studio" width="200" />
 
 Hacker:
 
