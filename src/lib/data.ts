@@ -100,7 +100,7 @@ export async function setAvatar(
   const path = `${id}/avatar.png`;
   const { error: upErr } = await supabase.storage
     .from(BUCKET)
-    .upload(path, blob, { upsert: true, contentType: "image/png" });
+    .upload(path, blob, { upsert: true, contentType: blob.type || "image/webp" });
   if (upErr) throw upErr;
   const { error: dbErr } = await supabase
     .from("profiles")
@@ -138,7 +138,7 @@ export async function addGarment(
   const path = `${id}/garments/${crypto.randomUUID()}.png`;
   const { error: upErr } = await supabase.storage
     .from(BUCKET)
-    .upload(path, blob, { contentType: "image/png" });
+    .upload(path, blob, { contentType: blob.type || "image/webp" });
   if (upErr) throw upErr;
   const { data, error } = await supabase
     .from("garments")
@@ -206,7 +206,7 @@ export async function addLook(
   const blob = dataURLtoBlob(imageDataUrl);
   const { error: upErr } = await supabase.storage
     .from(BUCKET)
-    .upload(path, blob, { contentType: "image/png" });
+    .upload(path, blob, { contentType: blob.type || "image/webp" });
   if (upErr) throw upErr;
   const { data, error } = await supabase
     .from("looks")

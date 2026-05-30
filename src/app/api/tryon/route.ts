@@ -56,6 +56,23 @@ export async function POST(req: Request) {
     )
     .join("\n");
 
+  // Regla del vestido según la selección (determinista, por categoría):
+  //  - vestido SIN pantalón seleccionado -> SOLO el vestido, piernas desnudas.
+  //  - vestido CON pantalón seleccionado -> permitido en capas (vestido sobre pantalón).
+  const hasDress = garments.some(
+    (g) =>
+      g.category === "dress" ||
+      /vestido|dress|gown|jumpsuit|romper|enteriz|overall/i.test(g.name ?? ""),
+  );
+  const hasBottom = garments.some((g) => g.category === "bottom");
+
+  const dressRule =
+    hasDress && !hasBottom
+      ? "2. CRITICAL — a DRESS / one-piece is selected and NO separate bottom was chosen: the person wears ONLY the dress. You MUST completely REMOVE the original jeans, pants, leggings or skirt. Below the dress hem show the person's BARE LEGS (skin). There must be ZERO trousers, jeans, denim or leggings visible anywhere in the image."
+      : hasDress && hasBottom
+        ? "2. A dress AND a separate bottom were both selected on purpose: layer the dress OVER the provided bottom (e.g. the dress over leggings/jeans), keeping both visible."
+        : "2. If any provided garment is a dress, gown, jumpsuit or one-piece, it covers BOTH torso and legs: there must be NO pants, jeans, leggings, shorts or skirt under or below it (show bare legs below the hem).";
+
   const prompt = [
     "You are a virtual try-on image generator.",
     "",
@@ -76,7 +93,7 @@ export async function POST(req: Request) {
     "   • If only shoes are provided → change only the footwear.",
     "1b. When a TOP is provided, FULLY REMOVE the person's original upper-body garment, including any tank top, t-shirt or undershirt. The new top must REPLACE it, never be layered ON TOP of it. NONE of the original top may remain visible — not at the neckline, sleeves, sides or hem.",
     "    • Let the new top fall naturally to the waistband so it covers wherever the original top used to be. Only if it is genuinely a cropped style, leave a small natural amount of bare skin below its hem — but NEVER fill that area with the original top or any invented undershirt.",
-    "2. A dress, gown, jumpsuit or one-piece covers BOTH the upper and lower body: it replaces the top AND the bottom together, so there must be NO pants, jeans, leggings, shorts or skirt visible under or below it (show bare legs below the hem).",
+    dressRule,
     "3. Do NOT add any garment or accessory that was neither provided nor already worn in the original photo.",
     "4. Fit each new garment realistically: correct drape, folds, layering, and shadows/lighting consistent with the body and pose. Keep the same framing as the first photo.",
     "5. BACKGROUND: keep the background PIXEL-IDENTICAL to the first photo — same exact color and brightness. Do NOT relight, recolor, brighten, darken or tint it, and NEVER let the garment colors influence it. For example, a green top must NOT make the background greenish, and a dark garment must NOT darken the backdrop. No colored backdrops, gradients, scenery or props.",

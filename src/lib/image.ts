@@ -72,8 +72,15 @@ export async function processUploadBlob(
   return removeImageBackground(small, opts.onProgress);
 }
 
-/** Redimensiona un Blob y lo devuelve como Blob PNG (conserva transparencia). */
-export async function resizeBlob(blob: Blob, maxSide = 1024): Promise<Blob> {
+/**
+ * Redimensiona un Blob y lo devuelve como Blob WebP (conserva transparencia y
+ * pesa ~70-80% menos que PNG, así carga mucho más rápido).
+ */
+export async function resizeBlob(
+  blob: Blob,
+  maxSide = 1024,
+  quality = 0.85,
+): Promise<Blob> {
   const dataUrl = await blobToDataURL(blob);
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -91,7 +98,8 @@ export async function resizeBlob(blob: Blob, maxSide = 1024): Promise<Blob> {
       ctx.drawImage(img, 0, 0, width, height);
       canvas.toBlob(
         (b) => (b ? resolve(b) : reject(new Error("toBlob falló"))),
-        "image/png",
+        "image/webp",
+        quality,
       );
     };
     img.onerror = reject;

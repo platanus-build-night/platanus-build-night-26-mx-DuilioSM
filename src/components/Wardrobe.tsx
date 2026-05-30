@@ -121,6 +121,8 @@ function GarmentCard({
         src={g.src}
         alt={g.name}
         draggable={false}
+        loading="lazy"
+        decoding="async"
         className="h-full w-full rounded-xl object-contain"
       />
       {isSel && (

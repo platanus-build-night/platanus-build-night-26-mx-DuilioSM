@@ -9,7 +9,6 @@ import { CATEGORIES, type Category } from "@/lib/types";
 import { PrimaryButton, GhostButton, Card } from "@/components/ui";
 import { LogoutButton } from "@/components/LogoutButton";
 
-const MAX_GARMENTS = 10;
 
 const STEPS = [
   { n: 1, label: "Tu foto", emoji: "📸" },
@@ -72,8 +71,7 @@ export default function Onboarding() {
     if (!files?.length) return;
     setBusy(true);
     try {
-      const room = MAX_GARMENTS - garments.length;
-      const chosen = Array.from(files).slice(0, Math.max(0, room));
+      const chosen = Array.from(files);
       for (let i = 0; i < chosen.length; i++) {
         const f = chosen[i];
         setStatus(
@@ -232,10 +230,10 @@ export default function Onboarding() {
         <Card className="mt-6 animate-pop">
           <div className="flex items-center justify-between gap-3">
             <h2 className="font-display text-2xl font-bold text-pink-dark">
-              🧥 Sube tu clóset ({garments.length}/{MAX_GARMENTS})
+              🧥 Sube tu clóset ({garments.length})
             </h2>
             <GhostButton
-              disabled={garments.length >= MAX_GARMENTS || busy}
+              disabled={busy}
               onClick={() => garmentInput.current?.click()}
             >
               + Añadir prendas

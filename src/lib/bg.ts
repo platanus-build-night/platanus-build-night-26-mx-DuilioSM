@@ -16,7 +16,8 @@ export async function removeImageBackground(
   const { removeBackground } = await import("@imgly/background-removal");
 
   const base = {
-    output: { format: "image/png" as const },
+    // WebP conserva transparencia y pesa mucho menos que PNG -> carga más rápido.
+    output: { format: "image/webp" as const, quality: 0.85 },
     proxyToWorker: true,
     progress: (_key: string, current: number, total: number) => {
       if (onProgress && total > 0) onProgress(current / total);

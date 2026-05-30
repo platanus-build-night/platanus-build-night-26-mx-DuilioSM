@@ -13,9 +13,13 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { useCloset } from "@/lib/store";
 import { urlToDataURL } from "@/lib/data";
-import { processUploadBlob, flattenToWhite } from "@/lib/image";
+import {
+  processUploadBlob,
+  flattenToWhite,
+  resizeBlob,
+  blobToDataURL,
+} from "@/lib/image";
 
-const MAX_GARMENTS = 10;
 import { AvatarStage } from "@/components/AvatarStage";
 import { Wardrobe } from "@/components/Wardrobe";
 import { GhostButton } from "@/components/ui";
@@ -145,8 +149,18 @@ export default function Play() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al generar el look");
 
+      // La IA devuelve un PNG grande -> lo comprimimos a WebP (~70% menos)
+      // antes de guardarlo, para que cargue rápido en la galería.
+      let lookImage = data.image as string;
+      try {
+        const blob = await (await fetch(lookImage)).blob();
+        lookImage = await blobToDataURL(await resizeBlob(blob, 1024));
+      } catch (cmpErr) {
+        console.warn("[look] no se pudo comprimir:", cmpErr);
+      }
+
       const look = await saveLook(
-        data.image,
+        lookImage,
         selGarments.map((g) => g.id),
       );
       setStage(look.src);
@@ -204,9 +218,7 @@ export default function Play() {
   // Añadir prendas nuevas desde el guardarropa (quita fondo + sube a Storage).
   const onAddFiles = useCallback(
     async (files: FileList) => {
-      const room =
-        MAX_GARMENTS - useCloset.getState().garments.length;
-      const chosen = Array.from(files).slice(0, Math.max(0, room));
+      const chosen = Array.from(files);
       if (chosen.length === 0) return;
       setAdding(true);
       try {
@@ -372,23 +384,37 @@ export default function Play() {
                 solo. ✨
               </p>
             ) : (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {selectedGarments.map((g) => (
-                  <button
-                    key={g.id}
-                    onClick={() => toggleSelect(g.id)}
-                    title="Quitar"
-                    className="relative h-14 w-14 overflow-hidden rounded-xl border-2 border-pink/30 bg-white"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={g.src}
-                      alt={g.name}
-                      className="h-full w-full object-contain"
-                    />
-                  </button>
-                ))}
-              </div>
+              <>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {selectedGarments.map((g) => (
+                    <button
+                      key={g.id}
+                      onClick={() => toggleSelect(g.id)}
+                      title="Quitar del look"
+                      aria-label={`Quitar ${g.name} del look`}
+                      className="group relative h-16 w-16 overflow-hidden rounded-xl border-2 border-pink/30 bg-white transition hover:border-pink"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={g.src}
+                        alt={g.name}
+                        className="h-full w-full object-contain transition group-hover:opacity-40"
+                      />
+                      {/* Badge de quitar siempre visible */}
+                      <span className="absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-pink text-[11px] font-bold text-white shadow">
+                        ✕
+                      </span>
+                      {/* Capa "Quitar" al pasar el cursor */}
+                      <span className="absolute inset-0 flex items-center justify-center bg-pink/0 text-[11px] font-bold text-pink-dark opacity-0 transition group-hover:bg-white/70 group-hover:opacity-100">
+                        Quitar
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-2 text-xs text-muted">
+                  Toca una prenda de arriba para quitarla del look. ✕
+                </p>
+              </>
             )}
 
             {error && (
@@ -424,7 +450,7 @@ export default function Play() {
               👚 Tu guardarropa
             </h2>
             <span className="text-xs text-foreground/50">
-              {garments.length}/{MAX_GARMENTS}
+              {garments.length} prendas
             </span>
           </div>
           <div className="min-h-0 flex-1">
@@ -434,7 +460,6 @@ export default function Play() {
               onToggle={toggleSelect}
               onAddFiles={onAddFiles}
               adding={adding}
-              canAdd={garments.length < MAX_GARMENTS}
             />
           </div>
         </section>
@@ -468,6 +493,8 @@ export default function Play() {
                     <img
                       src={l.src}
                       alt="Look"
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full cursor-pointer object-cover"
                       onClick={() => !isDeleting && setStage(l.src)}
                     />
