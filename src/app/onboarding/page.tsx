@@ -41,8 +41,8 @@ export default function Onboarding() {
   // Permite abrir directo en un paso con ?step=1 (foto) o ?step=2 (ropa).
   useEffect(() => {
     const s = new URLSearchParams(window.location.search).get("step");
-    if (s === "2") setStep(2);
-    if (s === "1") setStep(1);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- lectura única del paso desde la URL al montar
+    if (s === "2" || s === "1") setStep(s === "2" ? 2 : 1);
   }, []);
 
   async function onAvatarPick(files: FileList | null) {

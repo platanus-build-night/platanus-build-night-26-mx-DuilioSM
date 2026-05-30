@@ -236,6 +236,7 @@ export default function Play() {
     // Sin prendas -> vuelve a la foto original.
     if (selected.length === 0) {
       lastGenKey.current = "";
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza el escenario al avatar cuando no hay prendas
       setStage(avatar.src);
       return;
     }
@@ -644,7 +645,7 @@ export default function Play() {
               <div className="mt-3 flex gap-2">
                 <a
                   href={stage}
-                  download={`look-${Date.now()}.png`}
+                  download="glamour-look.webp"
                   className="flex-1 rounded-full border-2 border-pink/40 bg-white px-4 py-2 text-center text-sm font-semibold text-pink-dark hover:border-pink"
                 >
                   ⬇️ Descargar
