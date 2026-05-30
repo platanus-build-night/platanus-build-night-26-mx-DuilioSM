@@ -78,12 +78,13 @@ export async function POST(req: Request) {
     "",
     "The FIRST image is a full-body photo of a person wearing an ORIGINAL outfit.",
     "Treat this as a precise EDIT of that first image, NOT a new image: every pixel that is not a garment being replaced must stay IDENTICAL to the first photo.",
-    "KEEP THIS EXACT PERSON: face, hairstyle, skin tone, body shape, height and pose must stay identical and recognizable.",
+    "KEEP THIS EXACT PERSON: their FACE, facial features, hairstyle, hair color, skin tone, body shape, height and pose must stay 100% identical and recognizable — it must unmistakably be the SAME individual as in the first image.",
+    "IDENTITY LOCK (highest priority): the person in the first image is the ONLY human you may keep. The garment reference images often show OTHER people (models) wearing the clothes — you MUST completely IGNORE those models: do NOT copy or blend their face, hair, hair color, skin tone or body. NEVER replace the person with a model from a garment photo. If in doubt, keep the first image's person exactly.",
     "PRESERVE THE COMPOSITION EXACTLY: same camera framing, same zoom/scale, same crop, and the person in the SAME position within the frame as the first photo. Do NOT recenter, resize, zoom, shift or re-crop the person. The output must have the SAME aspect ratio as the first image.",
     "ALWAYS SHOW THE FULL BODY: the entire person must be visible from the top of the head down to the feet/shoes, completely inside the frame, with empty margin above the head and below the feet (exactly like the first image). NEVER crop, cut off or zoom into the head, torso, legs or feet. The feet must always be visible.",
     "",
-    "The remaining images are garments to put on the person. From EACH garment image use ONLY the garment itself —",
-    "IGNORE any model, mannequin, hanger, background or other clothing shown in those reference photos.",
+    "The remaining images are CLOTHING REFERENCES. From EACH one take ONLY the garment fabric, shape, color and pattern —",
+    "completely IGNORE the person/model wearing it, plus any mannequin, hanger, background or other clothing in that photo.",
     "Garments to apply:",
     garmentList,
     "",
@@ -99,7 +100,7 @@ export async function POST(req: Request) {
     "4. Fit each new garment realistically: correct drape, folds, layering, and shadows/lighting consistent with the body and pose. Keep the same framing as the first photo.",
     "5. BACKGROUND: keep the background PIXEL-IDENTICAL to the first photo — same exact color and brightness. Do NOT relight, recolor, brighten, darken or tint it, and NEVER let the garment colors influence it. For example, a green top must NOT make the background greenish, and a dark garment must NOT darken the backdrop. No colored backdrops, gradients, scenery or props.",
     "",
-    "Output: the full-body result on that same clean, neutral, uncolored light background. No text, watermarks, logos, collage or extra people. Return only the final image.",
+    "Output: the full-body result showing the SAME person from the first image (same face and identity), wearing the new garments, on that same clean, neutral, uncolored light background. No text, watermarks, logos, collage or extra people. Return only the final image.",
   ].join("\n");
 
   try {
@@ -122,11 +123,21 @@ export async function POST(req: Request) {
     );
 
     if (!imageFile) {
+      // Diagnóstico: por qué no vino imagen (moderación, refusal, etc.)
+      const diag = {
+        finishReason: result.finishReason,
+        text: result.text?.slice(0, 300),
+        warnings: result.warnings,
+        files: result.files.map((f) => f.mediaType),
+      };
+      console.error("[tryon] sin imagen:", JSON.stringify(diag));
+      const reason =
+        result.text?.slice(0, 160) ||
+        `finishReason=${result.finishReason}`;
       return NextResponse.json(
         {
-          error:
-            "El modelo no devolvió una imagen. Intenta de nuevo o con menos prendas.",
-          text: result.text,
+          error: `El modelo no devolvió una imagen (${reason}). Intenta de nuevo.`,
+          diag,
         },
         { status: 502 },
       );

@@ -61,7 +61,7 @@ export default function Home() {
   return (
     <div className="flex min-h-[100dvh] flex-col">
       {/* Barra superior: perfil / sesión */}
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4">
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4 pt-safe">
         <span className="flex items-center gap-2 font-display text-lg font-extrabold text-pink-dark">
           <Sparkle weight="fill" className="text-pink" /> Glamour Studio
         </span>
@@ -91,7 +91,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-6 pb-16 text-center">
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-6 pb-16 pb-safe text-center">
         {/* Lockup de marca */}
         <motion.div {...rise(0)} className="flex flex-col items-center">
           <span className="animate-float text-7xl drop-shadow-[0_10px_20px_rgba(216,39,111,0.25)]">

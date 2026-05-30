@@ -113,7 +113,7 @@ export default function Onboarding() {
   const canAdvance = step === 1 ? !!avatar : garments.length > 0;
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-8">
+    <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-8 pt-safe pb-safe">
       <div className="flex items-center justify-between gap-3">
         <Link
           href="/"
@@ -237,7 +237,7 @@ export default function Onboarding() {
       {/* Paso 2: prendas */}
       {step === 2 && (
         <Card className="mt-6 animate-pop">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-display text-2xl font-bold text-pink-dark">
               🧥 Sube tu clóset ({garments.length})
             </h2>

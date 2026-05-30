@@ -1,16 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { clsx } from "@/lib/clsx";
 
 export function AvatarStage({
   image,
   loading,
   onDropGarment,
+  fill = false,
+  className,
+  children,
 }: {
   image: string | null;
   loading: boolean;
   onDropGarment: (id: string) => void;
+  /** Llena la altura disponible (probador mobile) en vez de usar aspecto fijo. */
+  fill?: boolean;
+  className?: string;
+  /** Superposiciones del escenario (chips de "llevas puesto", acciones…). */
+  children?: ReactNode;
 }) {
   const [over, setOver] = useState(false);
 
@@ -28,10 +36,14 @@ export function AvatarStage({
         if (id) onDropGarment(id);
       }}
       className={clsx(
-        "relative mx-auto flex aspect-[3/4] w-full max-w-sm items-center justify-center overflow-hidden rounded-[2rem] border-4 bg-white shadow-xl transition",
+        "relative flex items-center justify-center overflow-hidden rounded-[2rem] border-4 bg-white transition",
+        fill
+          ? "h-full w-full shadow-[var(--shadow-card)]"
+          : "mx-auto aspect-[3/4] w-full max-w-sm shadow-xl",
         over
           ? "scale-[1.02] border-lilac ring-4 ring-lilac/30"
           : "border-white",
+        className,
       )}
     >
       {image ? (
@@ -65,6 +77,9 @@ export function AvatarStage({
           <p className="text-xs text-foreground/50">Puede tardar unos segundos</p>
         </div>
       )}
+
+      {/* Superposiciones del escenario (chips de outfit, acciones…) */}
+      {children}
     </div>
   );
 }

@@ -29,7 +29,7 @@ export default function Challenges() {
   const earned = totalStars(progress);
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-8">
+    <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-8 pt-safe pb-safe">
       {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <Link href="/" className="font-display text-2xl font-bold text-pink-dark">

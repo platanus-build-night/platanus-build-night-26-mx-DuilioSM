@@ -22,8 +22,17 @@ import {
   autoFrame,
 } from "@/lib/image";
 
+import {
+  Trophy,
+  TShirt,
+  Heart,
+  DownloadSimple,
+  ArrowCounterClockwise,
+} from "@phosphor-icons/react";
 import { AvatarStage } from "@/components/AvatarStage";
 import { Wardrobe } from "@/components/Wardrobe";
+import { HangerRail } from "@/components/HangerRail";
+import { LooksSheet } from "@/components/LooksSheet";
 import { GhostButton } from "@/components/ui";
 import { LogoutButton } from "@/components/LogoutButton";
 import { getChallenge, evalChallenge, saveResult } from "@/lib/challenges";
@@ -62,6 +71,7 @@ export default function Play() {
   const [error, setError] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [addStatus, setAddStatus] = useState<string | null>(null);
+  const [looksOpen, setLooksOpen] = useState(false); // hoja de looks (mobile)
 
   // Reto activo (viene por ?challenge=<id>).
   const challengeId = useSyncExternalStore(
@@ -304,8 +314,170 @@ export default function Play() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-5">
-      {/* Header */}
+    <>
+      {/* ===================== MOBILE · Probador ===================== */}
+      <div className="flex h-[100dvh] flex-col lg:hidden">
+        {/* Header compacto */}
+        <header className="flex items-center justify-between gap-2 px-4 pb-2 pt-safe">
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 font-display text-lg font-extrabold text-pink-dark"
+          >
+            <span className="text-xl">👗</span> Glamour
+          </Link>
+          <div className="flex items-center gap-1.5">
+            {looks.length > 0 && (
+              <button
+                onClick={() => setLooksOpen(true)}
+                aria-label="Mis looks"
+                className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-pink/20 bg-white/80 text-pink-dark shadow-sm transition active:scale-90"
+              >
+                <Heart weight="fill" className="text-pink" />
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-pink px-1 text-[10px] font-bold text-white">
+                  {looks.length}
+                </span>
+              </button>
+            )}
+            <Link
+              href="/challenges"
+              aria-label="Retos"
+              className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-pink/20 bg-white/80 text-pink-dark shadow-sm transition active:scale-90"
+            >
+              <Trophy weight="fill" className="text-gold" />
+            </Link>
+            <Link
+              href="/onboarding?step=2"
+              aria-label="Mi guardarropa"
+              className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-pink/20 bg-white/80 text-pink-dark shadow-sm transition active:scale-90"
+            >
+              <TShirt weight="bold" />
+            </Link>
+            <LogoutButton iconOnly />
+          </div>
+        </header>
+
+        {/* Banner compacto del reto activo */}
+        {challenge && challengeEval && (
+          <Link
+            href="/challenges"
+            className={`mx-4 mb-1 flex items-center gap-2.5 rounded-2xl border-2 px-3 py-2 backdrop-blur transition ${
+              challengeEval.complete
+                ? "border-pink bg-pink-soft/50"
+                : "border-pink/15 bg-white/70"
+            }`}
+          >
+            <span className="text-2xl">{challenge.emoji}</span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-display text-sm font-bold text-pink-dark">
+                {challenge.title}
+              </p>
+              <p className="truncate text-[11px] text-foreground/55">
+                {challengeEval.tiers.find((t) => !t.done)?.label ??
+                  "¡Las 3 estrellas! 🎉"}
+              </p>
+            </div>
+            <span className="shrink-0 text-sm tracking-tight">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <span
+                  key={i}
+                  className={
+                    i < challengeEval.stars ? "text-gold" : "text-pink-soft"
+                  }
+                >
+                  ★
+                </span>
+              ))}
+            </span>
+          </Link>
+        )}
+
+        {/* Espejo: llena el alto disponible */}
+        <div className="relative min-h-0 flex-1 px-4 pt-1">
+          <AvatarStage
+            image={stage}
+            loading={generating}
+            onDropGarment={onDrop}
+            fill
+          >
+            {error && (
+              <div className="absolute inset-x-3 top-3 rounded-xl bg-red-50/95 px-3 py-2 text-center text-xs font-semibold text-red-600 shadow">
+                {error}
+              </div>
+            )}
+            {stage && stage !== avatar?.src && !generating && (
+              <div className="absolute right-3 top-3 flex flex-col gap-2">
+                <a
+                  href={stage}
+                  download="glamour-look.png"
+                  aria-label="Descargar look"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-pink/20 bg-white/90 text-pink-dark shadow transition active:scale-90"
+                >
+                  <DownloadSimple weight="bold" />
+                </a>
+                <button
+                  onClick={() => avatar && setStage(avatar.src)}
+                  aria-label="Ver foto original"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-pink/20 bg-white/90 text-pink-dark shadow transition active:scale-90"
+                >
+                  <ArrowCounterClockwise weight="bold" />
+                </button>
+              </div>
+            )}
+          </AvatarStage>
+        </div>
+
+        {/* Llevas puesto */}
+        <div className="px-4 py-2">
+          {selectedGarments.length === 0 ? (
+            <p className="text-center text-xs font-semibold text-pink-dark/55">
+              Toca una prenda del riel para vestir tu avatar ✨
+            </p>
+          ) : (
+            <div className="no-scrollbar flex items-center gap-2 overflow-x-auto">
+              <span className="shrink-0 text-[10px] font-extrabold uppercase tracking-wide text-pink-dark/50">
+                Llevas
+              </span>
+              {selectedGarments.map((g) => (
+                <button
+                  key={g.id}
+                  onClick={() => toggleSelect(g.id)}
+                  aria-label={`Quitar ${g.name}`}
+                  className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border-2 border-pink/30 bg-white"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={g.src}
+                    alt={g.name}
+                    className="h-full w-full object-contain"
+                  />
+                  <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-pink text-[9px] font-bold text-white shadow">
+                    ✕
+                  </span>
+                </button>
+              ))}
+              <button
+                onClick={clearSelection}
+                className="shrink-0 rounded-full border-2 border-pink/20 px-3 py-1 text-[11px] font-bold text-pink-dark/70"
+              >
+                Limpiar
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Riel de perchas (firma) */}
+        <HangerRail
+          garments={garments}
+          selected={selected}
+          onToggle={toggleSelect}
+          onAddFiles={onAddFiles}
+          adding={adding}
+        />
+      </div>
+
+      {/* ===================== DESKTOP ===================== */}
+      <main className="mx-auto hidden w-full max-w-6xl flex-1 px-4 py-5 lg:block">
+        {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <Link href="/" className="font-display text-2xl font-bold text-pink-dark">
           👗 Glamour Studio
@@ -575,6 +747,7 @@ export default function Play() {
           </div>
         </section>
       )}
+      </main>
 
       {/* Celebración al completar un reto */}
       {celebrate && challenge && (
@@ -637,6 +810,16 @@ export default function Play() {
           </div>
         </div>
       )}
-    </main>
+
+      {/* Hoja de looks (mobile) */}
+      <LooksSheet
+        open={looksOpen}
+        looks={looks}
+        deletingId={deletingId}
+        onClose={() => setLooksOpen(false)}
+        onSelect={(src) => setStage(src)}
+        onRemove={handleRemoveLook}
+      />
+    </>
   );
 }

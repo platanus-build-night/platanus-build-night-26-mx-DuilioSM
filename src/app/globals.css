@@ -85,6 +85,70 @@ body > * {
   z-index: 1;
 }
 
+/* Oculta scrollbar en rieles horizontales (sin perder el scroll) */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Respeta el notch / barra inferior del teléfono */
+.pb-safe {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+.pt-safe {
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+}
+
+/* ---------- Firma: riel de perchas ----------
+   Una línea de riel cruza la zona; cada prenda "cuelga" de un gancho. */
+.rail-line {
+  position: relative;
+}
+.rail-line::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 14px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--pink-soft) 6%,
+    #ffc6e0 50%,
+    var(--pink-soft) 94%,
+    transparent
+  );
+}
+/* Gancho: tallo + arco que se engancha en el riel */
+.hanger {
+  position: relative;
+  padding-top: 18px;
+}
+.hanger::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  transform: translateX(-50%);
+  border: 3px solid var(--pink);
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  border-radius: 999px;
+  transform-origin: bottom center;
+}
+.hanger.is-on::before {
+  border-color: var(--pink-dark);
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+}
+
 /* Scrollbar de marca */
 .fancy-scroll::-webkit-scrollbar {
   width: 10px;
