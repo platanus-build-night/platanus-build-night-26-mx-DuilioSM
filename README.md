@@ -1,8 +1,8 @@
 # Duilio Sotelo — Platanus Build Night — Ciudad de México Project
 
-**Current project logo:** project-logo.png
+**Current project logo:** src/app/icon.png
 
-<img src="./project-logo.png" alt="Project Logo" width="200" />
+<img src="./src/app/icon.png" alt="Glamour Studio" width="200" />
 
 Hacker:
 
