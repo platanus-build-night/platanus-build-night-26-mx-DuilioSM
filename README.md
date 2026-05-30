@@ -45,6 +45,10 @@ Probador virtual con IA, **mobile-first**. Subes una foto de cuerpo completo + t
 prendas reales, **tocas la ropa para vestirte** y la IA (Google **Gemini 2.5 Flash
 Image** vía **Vercel AI Gateway**) genera al instante cómo se te ve el outfit puesto.
 
+> 📐 **Arquitectura técnica y diagramas:** ver [`ARCHITECTURE.md`](./ARCHITECTURE.md)
+> — pipeline de imagen (WebGPU + Web Worker), RLS por usuario, Realtime,
+> extensión de navegador (MV3) y el flujo de IA.
+
 ## Cómo funciona
 
 1. **Cuenta** (`/login`)
