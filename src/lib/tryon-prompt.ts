@@ -49,14 +49,15 @@ export function buildTryonPrompt(garments: PromptGarment[]): string {
   return [
     "You are a virtual try-on image generator.",
     "",
-    "The FIRST image is a full-body photo of a person wearing an ORIGINAL outfit.",
-    "Treat this as a precise EDIT of that first image, NOT a new image: every pixel that is not a garment being replaced must stay IDENTICAL to the first photo.",
-    "KEEP THIS EXACT PERSON: their FACE, facial features, hairstyle, hair color, skin tone, body shape, height and pose must stay 100% identical and recognizable — it must unmistakably be the SAME individual as in the first image.",
-    "IDENTITY LOCK (highest priority): the person in the first image is the ONLY human you may keep. The garment reference images often show OTHER people (models) wearing the clothes — you MUST completely IGNORE those models: do NOT copy or blend their face, hair, hair color, skin tone or body. NEVER replace the person with a model from a garment photo. If in doubt, keep the first image's person exactly.",
+    "The FIRST image is the person (the user) wearing an ORIGINAL outfit. It is your identity reference.",
+    "OUTPUT EXACTLY ONE PERSON: the result must contain a SINGLE full-body figure of that same person, shown ONCE. Do NOT create a grid, collage, contact sheet, film strip, multiple poses, side-by-side variations, duplicates or several copies of the person. One person, one figure, centered.",
+    "Treat this as a precise EDIT of the first photo, NOT a new image: every pixel that is not a garment being replaced must stay IDENTICAL to the first photo.",
+    "KEEP THIS EXACT PERSON: their FACE, facial features, hairstyle, hair color, skin tone, body shape, height and pose must stay 100% identical and recognizable — it must unmistakably be the SAME individual shown in the first image.",
+    "IDENTITY LOCK (highest priority): the person in the first image is the ONLY human you may keep. The other images are CLOTHING references that often show OTHER people (models) wearing the clothes — you MUST completely IGNORE those models: do NOT copy or blend their face, hair, hair color, skin tone or body. NEVER replace the person with a model from a garment photo. If in doubt, copy the face and body from the first image exactly.",
     "PRESERVE THE COMPOSITION EXACTLY: same camera framing, same zoom/scale, same crop, and the person in the SAME position within the frame as the first photo. Do NOT recenter, resize, zoom, shift or re-crop the person. The output must have the SAME aspect ratio as the first image.",
     "ALWAYS SHOW THE FULL BODY: the entire person must be visible from the top of the head down to the feet/shoes, completely inside the frame, with empty margin above the head and below the feet (exactly like the first image). NEVER crop, cut off or zoom into the head, torso, legs or feet. The feet must always be visible.",
     "",
-    "The remaining images are CLOTHING REFERENCES. From EACH one take ONLY the garment fabric, shape, color and pattern —",
+    "The other images (after the first) are CLOTHING REFERENCES. From EACH one take ONLY the garment fabric, shape, color and pattern —",
     "completely IGNORE the person/model wearing it, plus any mannequin, hanger, background or other clothing in that photo.",
     "Garments to apply:",
     garmentList(garments),
@@ -73,6 +74,6 @@ export function buildTryonPrompt(garments: PromptGarment[]): string {
     "4. Fit each new garment realistically: correct drape, folds, layering, and shadows/lighting consistent with the body and pose. Keep the same framing as the first photo.",
     "5. BACKGROUND: keep the background PIXEL-IDENTICAL to the first photo — same exact color and brightness. Do NOT relight, recolor, brighten, darken or tint it, and NEVER let the garment colors influence it. For example, a green top must NOT make the background greenish, and a dark garment must NOT darken the backdrop. No colored backdrops, gradients, scenery or props.",
     "",
-    "Output: the full-body result showing the SAME person from the first image (same face and identity), wearing the new garments, on that same clean, neutral, uncolored light background. No text, watermarks, logos, collage or extra people. Return only the final image.",
+    "Output: ONE single full-body image of the SAME person from the first image (same face and identity), wearing the new garments, centered on a clean, neutral, uncolored light background. Exactly one person, shown once. No grid, no collage, no duplicates, no text, watermarks, logos or extra people. Return only the final image.",
   ].join("\n");
 }

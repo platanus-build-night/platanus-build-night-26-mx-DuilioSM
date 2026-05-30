@@ -9,6 +9,7 @@ import {
   isUnlocked,
   MAX_STARS,
 } from "@/lib/challenges";
+import { Brand } from "@/components/ui";
 import { LogoutButton } from "@/components/LogoutButton";
 
 function StarRow({ value }: { value: number }) {
@@ -32,8 +33,8 @@ export default function Challenges() {
     <main className="mx-auto w-full max-w-2xl flex-1 px-5 py-8 pt-safe pb-safe">
       {/* Header */}
       <div className="flex items-center justify-between gap-3">
-        <Link href="/" className="font-display text-2xl font-bold text-pink-dark">
-          ← Glamour Studio
+        <Link href="/" aria-label="Inicio">
+          <Brand className="h-9" back />
         </Link>
         <LogoutButton />
       </div>

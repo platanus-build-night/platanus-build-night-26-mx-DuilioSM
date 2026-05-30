@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useCloset } from "@/lib/store";
 import { processUploadBlob, autoFrame, blobToDataURL } from "@/lib/image";
 import { CATEGORIES, type Category } from "@/lib/types";
-import { PrimaryButton, GhostButton, Card } from "@/components/ui";
+import { PrimaryButton, GhostButton, Card, Brand } from "@/components/ui";
 import { LogoutButton } from "@/components/LogoutButton";
 
 
@@ -115,11 +115,8 @@ export default function Onboarding() {
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-8 pt-safe pb-safe">
       <div className="flex items-center justify-between gap-3">
-        <Link
-          href="/"
-          className="font-display text-2xl font-bold text-pink-dark"
-        >
-          ← Glamour Studio
+        <Link href="/" aria-label="Inicio">
+          <Brand className="h-9" back />
         </Link>
         <LogoutButton />
       </div>

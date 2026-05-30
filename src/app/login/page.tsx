@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { PrimaryButton, Card } from "@/components/ui";
+import { PrimaryButton, Card, Brand } from "@/components/ui";
 
 function LoginForm() {
   const router = useRouter();
@@ -133,11 +133,8 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <main className="flex flex-1 flex-col items-center justify-center px-5 py-10">
-      <Link
-        href="/"
-        className="mb-6 font-display text-3xl font-extrabold text-pink-dark"
-      >
-        👗 Glamour Studio
+      <Link href="/" aria-label="Inicio" className="mb-6">
+        <Brand className="h-20 sm:h-24" />
       </Link>
       <Suspense fallback={<div className="text-pink-dark">Cargando…</div>}>
         <LoginForm />

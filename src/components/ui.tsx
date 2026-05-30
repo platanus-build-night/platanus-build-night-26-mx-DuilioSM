@@ -3,6 +3,32 @@
 import { clsx } from "@/lib/clsx";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
+/** Logo de marca (lockup Glamour Studio). Pásale la altura con className (h-8, h-9…). */
+export function Brand({
+  className,
+  back = false,
+}: {
+  className?: string;
+  back?: boolean;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1">
+      {back && (
+        <span className="text-2xl font-bold leading-none text-pink-dark/60" aria-hidden>
+          ‹
+        </span>
+      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/icono.png"
+        alt="Glamour Studio"
+        draggable={false}
+        className={clsx("w-auto select-none", className)}
+      />
+    </span>
+  );
+}
+
 /** Botón principal: pill, degradado de marca, sombra "chunky" con feedback táctil. */
 export function PrimaryButton({
   children,

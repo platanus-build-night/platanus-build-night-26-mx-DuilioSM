@@ -33,7 +33,7 @@ import { AvatarStage } from "@/components/AvatarStage";
 import { Wardrobe } from "@/components/Wardrobe";
 import { HangerRail } from "@/components/HangerRail";
 import { LooksSheet } from "@/components/LooksSheet";
-import { GhostButton } from "@/components/ui";
+import { GhostButton, Brand } from "@/components/ui";
 import { LogoutButton } from "@/components/LogoutButton";
 import { getChallenge, evalChallenge, saveResult } from "@/lib/challenges";
 
@@ -320,11 +320,8 @@ export default function Play() {
       <div className="flex h-[100dvh] flex-col lg:hidden">
         {/* Header compacto */}
         <header className="flex items-center justify-between gap-2 px-4 pb-2 pt-safe">
-          <Link
-            href="/"
-            className="flex items-center gap-1.5 font-display text-lg font-extrabold text-pink-dark"
-          >
-            <span className="text-xl">👗</span> Glamour
+          <Link href="/" aria-label="Inicio">
+            <Brand className="h-8" />
           </Link>
           <div className="flex items-center gap-1.5">
             {looks.length > 0 && (
@@ -480,8 +477,8 @@ export default function Play() {
       <main className="mx-auto hidden w-full max-w-6xl flex-1 px-4 py-5 lg:block">
         {/* Header */}
       <div className="flex items-center justify-between gap-3">
-        <Link href="/" className="font-display text-2xl font-bold text-pink-dark">
-          👗 Glamour Studio
+        <Link href="/" aria-label="Inicio">
+          <Brand className="h-9" />
         </Link>
         <div className="flex items-center gap-2">
           <Link href="/challenges">

@@ -6,7 +6,9 @@ import { buildTryonPrompt } from "@/lib/tryon-prompt";
 // Generar imágenes puede tardar; ampliamos el tiempo máximo de la función.
 export const maxDuration = 120;
 
-const MODEL = process.env.GEMINI_IMAGE_MODEL ?? "google/gemini-2.5-flash-image";
+// gemini-3-pro-image preserva mucho mejor el rostro/identidad en try-on
+// multi-imagen (clave cuando las prendas vienen en modelos). Configurable por env.
+const MODEL = process.env.GEMINI_IMAGE_MODEL ?? "google/gemini-3-pro-image";
 
 interface GarmentInput {
   src: string; // data URL
@@ -60,6 +62,8 @@ export async function POST(req: Request) {
           role: "user",
           content: [
             { type: "text", text: prompt },
+            // El avatar va PRIMERO (referencia de identidad). El modelo pro ya
+            // conserva el rostro; no lo duplicamos para evitar collages.
             { type: "image", image: avatar },
             ...garments.map((g) => ({ type: "image" as const, image: g.src })),
           ],

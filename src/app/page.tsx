@@ -14,7 +14,7 @@ import {
 } from "@phosphor-icons/react";
 import { createClient } from "@/lib/supabase/client";
 import { useCloset } from "@/lib/store";
-import { GhostButton } from "@/components/ui";
+import { GhostButton, Brand } from "@/components/ui";
 import {
   useChallengeProgress,
   totalStars,
@@ -62,9 +62,7 @@ export default function Home() {
     <div className="flex min-h-[100dvh] flex-col">
       {/* Barra superior: perfil / sesión */}
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4 pt-safe">
-        <span className="flex items-center gap-2 font-display text-lg font-extrabold text-pink-dark">
-          <Sparkle weight="fill" className="text-pink" /> Glamour Studio
-        </span>
+        <Brand className="h-8" />
         <div className="h-9">
           {authed === true && (
             <div className="flex items-center gap-2">
@@ -94,13 +92,9 @@ export default function Home() {
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-6 pb-16 pb-safe text-center">
         {/* Lockup de marca */}
         <motion.div {...rise(0)} className="flex flex-col items-center">
-          <span className="animate-float text-7xl drop-shadow-[0_10px_20px_rgba(216,39,111,0.25)]">
-            👗
-          </span>
-          <h1 className="mt-3 font-display text-5xl font-extrabold tracking-tight text-pink-dark drop-shadow-sm sm:text-7xl">
-            Glamour Studio
-          </h1>
-          <p className="mt-3 max-w-md text-lg text-muted">
+          <h1 className="sr-only">Glamour Studio</h1>
+          <Brand className="animate-float h-28 drop-shadow-[0_12px_24px_rgba(216,39,111,0.25)] sm:h-36" />
+          <p className="mt-4 max-w-md text-lg text-muted">
             Viste tu avatar con tu ropa real y deja que la IA cree tu look.
           </p>
         </motion.div>
